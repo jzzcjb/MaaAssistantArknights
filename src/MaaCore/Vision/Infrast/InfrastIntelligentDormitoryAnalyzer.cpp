@@ -74,13 +74,14 @@ void asst::InfrastIntelligentDormitoryAnalyzer::analyze_room(const Rect& anchor_
 #endif
     }
 
-    // 2 遍历 5 个槽位
+    // 遍历 5 个槽位
     for (int i = 0; i < 5; ++i) {
         analyze_slot(i, anchor_rect, room_info);
     }
 
     // 特判第四个房间的第五个槽位
-    if (room_info.room_name == "宿舍4" && room_info.slots_lock[4] == false) {
+    if (room_info.room_name == "宿舍4" && room_info.slots_lock.size() > 4 && room_info.slots_rect.size() > 4 &&
+        room_info.slots_mood.size() > 4 && room_info.slots_lock[4] == false) {
         const auto& dorm_status_task = Task.get<OcrTaskInfo>("InfrastOverviewDormStatus");
         cv::Mat dorm_status_img =
             m_image(make_rect<cv::Rect>(room_info.slots_rect[4].move(dorm_status_task->rect_move)));
@@ -200,6 +201,9 @@ double asst::InfrastIntelligentDormitoryAnalyzer::identify_smiley_and_mood(const
             return 1.0;
         case infrast::SmileyType::Work:
             return calculate_mood_ratio(best_rect);
+        case infrast::SmileyType::Invalid:
+        default:
+            return -1.0;
         }
     }
     return -1.0;

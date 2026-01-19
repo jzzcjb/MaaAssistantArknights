@@ -214,6 +214,9 @@ double asst::InfrastIntelligentWorkspaceAnalyzer::identify_smiley_and_mood(const
             return 1.0;
         case infrast::SmileyType::Work:
             return calculate_mood_ratio(best_rect);
+        case infrast::SmileyType::Invalid:
+        default:
+            return -1.0;
         }
     }
     return -1.0;

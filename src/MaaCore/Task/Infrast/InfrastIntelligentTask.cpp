@@ -11,6 +11,22 @@
 #include <algorithm>
 using namespace std::string_literals;
 
+void asst::InfrastIntelligentTask::reset_allow_flags()
+{
+    dorm_allow = false;
+    mfg_allow = false;
+    trade_allow = false;
+    power_allow = false;
+    office_allow = false;
+    reception_allow = false;
+    control_allow = false;
+    processing_allow = false;
+    training_allow = false;
+    continue_training = false;
+    m_room_infos.clear();
+    m_dorm_infos.clear();
+}
+
 void asst::InfrastIntelligentTask::swipe_overview_up()
 {
     ProcessTask(*this, { "InfrastOverviewSwipeUp" }).run();
@@ -120,15 +136,7 @@ bool asst::InfrastIntelligentTask::scan_overview_workspace()
 
         for (const auto& room : current_results) {
             m_room_infos.push_back(room);
-            Log.info(
-                "Scanned:",
-                room.room_name,
-                "| Moods:",
-                room.slots_mood[0],
-                room.slots_mood[1],
-                room.slots_mood[2],
-                room.slots_mood[3],
-                room.slots_mood[4]);
+            Log.info("Scanned:", room.room_name, "| Moods:", room.slots_mood);
         }
 
         prev_page_signatures = current_page_signatures;
@@ -346,7 +354,7 @@ bool asst::InfrastIntelligentTask::find_and_do_special(int target_index)
 
 bool asst::InfrastIntelligentTask::find_and_do_room(int target_index)
 {
-    if (target_index < 0 || target_index >= m_room_infos.size()) {
+    if (target_index < 0 || target_index >= static_cast<int>(m_room_infos.size())) {
         Log.error("InfrastIntelligentTask | Invalid room index:", target_index);
         return false;
     }
@@ -374,7 +382,8 @@ bool asst::InfrastIntelligentTask::find_and_do_room(int target_index)
         for (int i = 0; i < static_cast<int>(m_room_infos.size()); ++i) {
             bool match = true;
             for (int j = 0; j < static_cast<int>(current_rooms.size()); ++j) {
-                if (i + j >= m_room_infos.size() || m_room_infos[i + j].room_name != current_rooms[j].room_name) {
+                if (i + j >= static_cast<int>(current_rooms.size()) ||
+                    m_room_infos[i + j].room_name != current_rooms[j].room_name) {
                     match = false;
                     break;
                 }
@@ -534,7 +543,7 @@ bool asst::InfrastIntelligentTask::_run()
         int used_capacity_prediction = 0;
         std::vector<int> processed_indices;
 
-        for (int i = 0; i < candidates.size(); ++i) {
+        for (int i = 0; i < static_cast<int>(candidates.size()); ++i) {
             const auto& cand = candidates[i];
 
             // 这个房间塞进去就爆了
@@ -565,7 +574,7 @@ bool asst::InfrastIntelligentTask::_run()
             break;
         }
         std::vector<asst::infrast::InfrastRoomInfo> next_round_candidates;
-        for (int i = 0; i < candidates.size(); ++i) {
+        for (int i = 0; i < static_cast<int>(candidates.size()); ++i) {
             bool processed = false;
             for (int idx : processed_indices) {
                 if (i == idx) {

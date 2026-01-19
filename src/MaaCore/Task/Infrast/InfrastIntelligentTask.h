@@ -41,7 +41,9 @@ public:
         }
     }
 
-    void set_continue_training() { continue_training = true; }
+    void set_continue_training(bool _continue_training) { this->continue_training = _continue_training; }
+
+    void reset_allow_flags();
 
 protected:
     virtual bool _run() override;

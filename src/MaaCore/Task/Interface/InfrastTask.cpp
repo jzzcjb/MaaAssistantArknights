@@ -134,7 +134,6 @@ bool asst::InfrastTask::set_params(const json::value& params)
                     }
                 }
                 if (facility == "Training" && !continue_training_enable) {
-                    m_intelligent_task_ptr->set_continue_training();
                     Log.info("skip facility in intelligent mode (No Training):", facility);
                     continue;
                 }
@@ -179,6 +178,7 @@ bool asst::InfrastTask::set_params(const json::value& params)
 
     bool continue_training = params.get("continue_training", false);
     m_training_task_ptr->set_continue_training(continue_training);
+    m_intelligent_task_ptr->set_continue_training(continue_training);
 
     if (mode != Mode::Custom) {
         std::string drones = params.get("drones", "_NotUse");
